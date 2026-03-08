@@ -82,7 +82,17 @@ function sizeMatchesUser(
   userWaist: number | null,
   userShoe: number | null
 ): boolean {
-  if (!item.sizes_available || item.sizes_available.length === 0) return true;
+  // Handle sizes_available being a JSON string, null, or already an array
+  let sizes: string[] = [];
+  if (!item.sizes_available) return true;
+  if (typeof item.sizes_available === "string") {
+    try { sizes = JSON.parse(item.sizes_available); } catch { return true; }
+  } else if (Array.isArray(item.sizes_available)) {
+    sizes = item.sizes_available;
+  } else {
+    return true;
+  }
+  if (sizes.length === 0) return true;
 
   const category = item.category;
 
@@ -90,7 +100,7 @@ function sizeMatchesUser(
   if (category === "shoes") {
     if (!userShoe) return true; // no preference set
     const shoeStr = String(userShoe);
-    return item.sizes_available.some(
+    return sizes.some(
       (s) => s === shoeStr || s === `US ${shoeStr}` || s === `${shoeStr}`
     );
   }
@@ -99,14 +109,14 @@ function sizeMatchesUser(
   if (category === "pants" || category === "shorts") {
     if (!userWaist) return true;
     const waistStr = String(userWaist);
-    return item.sizes_available.some(
+    return sizes.some(
       (s) => s === waistStr || s === `W${waistStr}` || s.startsWith(waistStr)
     );
   }
 
   // Top sizing (tee, knit, outerwear, accessories)
   if (!userSizeTop) return true;
-  return item.sizes_available.some(
+  return sizes.some(
     (s) => s.toUpperCase() === userSizeTop.toUpperCase()
   );
 }
