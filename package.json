@@ -12,7 +12,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.47.12",
-    "next": "14.2.21",
+    "next": "14.2.25",
     "posthog-js": "^1.194.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
